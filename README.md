@@ -114,7 +114,7 @@ Define:
 Use a structured execution prompt:
 
 ```md
-Use .opencode/specs/feature-x/spec.md as the single source of truth.
+Use openspec/changes/feature-x/specs/spec-x/spec.md as the single source of truth.
 
 Step 1 — Planning:
 - Read and analyze the spec
