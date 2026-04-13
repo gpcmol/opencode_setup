@@ -1,79 +1,165 @@
-### 0. Setup (version control)
+# Development Workflow
+
+## -1. Execution defaults (NO PROMPTS)
+
+- Always use sub-agent driven execution
+- Never use inline execution
+- Always create and use a git worktree
+- Never ask the user to choose execution mode or worktree
+- Assume these preferences are mandatory defaults
+- Automatically proceed with these choices
+
+---
+
+## 0. Setup (version control)
 
 - Ensure the project is a git repository
+- If not:
+  - Initialize git
 - Create a new branch for the feature
-- Use a separate git worktree for isolation
-- Perform all changes inside this worktree
-- Do not modify the main branch directly
+- Create a dedicated git worktree for this branch
+- Perform all changes inside this worktree only
+- Never modify the main branch directly
+- Keep the main branch clean at all times
 - Commit changes in small, logical steps
+- Use clear commit messages (what + why)
 - Never leave the worktree in a broken state (tests must pass)
+- Sync regularly with main branch if needed (rebase or merge carefully)
 
 ---
 
-### 1. Understand context
+## 1. Understand context
+
 - Check existing code and patterns
-- Read relevant OpenAPI specs
-- Identify constraints from instructions (backend, testing, brownfield)
+- Identify architectural conventions
+- Read relevant OpenAPI specs (if applicable)
+- Identify:
+  - Backend/frontend constraints
+  - Testing strategy
+  - Brownfield limitations
+- Locate related modules and dependencies
+- Avoid introducing new patterns if existing ones suffice
 
 ---
 
-### 2. Plan before coding
+## 2. Plan before coding (MANDATORY)
+
 - Identify impacted areas
-- Break down into small, incremental changes
-- Identify risks and edge cases
-- Consider OpenAPI impact
+- Break down into small, incremental steps
+- Define:
+  - Expected behavior
+  - Test strategy
+- Identify:
+  - Risks
+  - Edge cases
+  - Failure scenarios
+- Consider:
+  - OpenAPI impact
+  - Backward compatibility
 - Keep changes minimal and localized
 
-Do NOT start implementation yet if planning is incomplete.
+Do NOT start implementation if:
+- Scope is unclear
+- Steps are too large
+- Risks are not understood
 
 ---
 
-### 3. Implement (incremental)
+## 3. Implement (incremental & controlled)
+
+- Use sub-agents to:
+  - Isolate responsibilities
+  - Keep changes scoped
 - Implement in small, safe steps
-- Follow backend/frontend rules
+- Follow existing patterns strictly
 - Respect brownfield constraints
-- Prefer TDD:
-    - write tests before or alongside implementation
+
+Prefer TDD:
+- Write a failing test first (if feasible)
+- Implement minimal code to pass
+
+Avoid:
+- Large refactors outside scope
+- Speculative abstractions
+- Unnecessary dependencies
 
 ---
 
-### 4. Feedback loop (MANDATORY)
+## 4. Feedback loop (MANDATORY after EACH step)
 
-After each implementation step:
+### 4.1 Run tests
 
-#### 4.1 Run tests
-- Run unit and integration tests
-- If tests fail:
-    - analyze failures
-    - fix issues before continuing
+- Run unit tests
+- Run integration tests (if applicable)
 
-#### 4.2 Evaluate complexity
-- Check for:
-    - large or unclear methods
-    - deep nesting
-    - duplicated logic
-    - poor separation of concerns
+If tests fail:
+- Stop
+- Analyze root cause
+- Fix before continuing
 
-- If complexity is too high:
-    - refactor locally (only in modified area)
-    - keep behavior unchanged
-    - re-run tests
+---
+
+### 4.2 Evaluate complexity
+
+Check for:
+- Large or unclear methods
+- Deep nesting
+- Duplicated logic
+- Tight coupling
+- Poor naming
+
+If complexity is too high:
+- Refactor only modified areas
+- Keep behavior unchanged
+- Re-run tests
+
+---
+
+### 4.3 Sanity check
+
+- Does this step still match the plan?
+- Is scope creeping?
+- Is this the simplest possible solution?
+
+---
 
 Repeat until:
-- tests pass
-- complexity is acceptable
+- Tests pass
+- Complexity is acceptable
+- Step is clean and complete
 
 ---
 
-### 5. Validate
-- Ensure OpenAPI consistency
+## 5. Validate (pre-completion)
+
+- Ensure OpenAPI consistency (if applicable)
 - Ensure backward compatibility
 - Verify no regressions
-- Perform critical self-review
+- Check integration points
+
+Perform critical self-review:
+- Would another developer understand this quickly?
+- Is this consistent with the codebase?
 
 ---
 
-## Definition of done
+## 6. Finalize
+
+- Clean up:
+  - Unused code
+  - Debug artifacts
+- Ensure commits are:
+  - Logically grouped
+  - Clearly named
+- Optionally squash commits if required by repo strategy
+
+Prepare for merge:
+- Ensure branch is up-to-date
+- Resolve conflicts cleanly
+
+---
+
+## Definition of Done (STRICT)
 
 A task is NOT complete unless:
 
@@ -81,5 +167,11 @@ A task is NOT complete unless:
 - Tests exist for new or changed behavior
 - No breaking changes are introduced
 - OpenAPI is aligned with implementation (if applicable)
-- Code changes are small, safe, and localized
-- Complexity is acceptable for the modified area
+- Code changes are:
+  - Small
+  - Safe
+  - Localized
+- Complexity is acceptable in modified areas
+- Code follows existing patterns
+- Worktree is clean and stable
+- Branch is ready for merge without additional fixes

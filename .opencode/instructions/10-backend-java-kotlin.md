@@ -12,6 +12,7 @@ Kotlin/Java best practices:
 - Avoid nulls; use Optional (Java) or nullable types carefully (Kotlin)
 - Use data classes for DTOs (Kotlin)
 - Avoid over-engineering abstractions
+- For Java, make everything final
 
 Maven:
 - Standard Maven project structure
