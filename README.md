@@ -12,6 +12,7 @@ The goal is **higher quality, safer changes, and better maintainability** throug
 > ⚠️ This approach may be slightly slower, but aims to significantly improve code quality.
 
 - The pretentious language is not my own but that of AI.
+- Warning: use this in a controlled environment.
 ---
 
 # 🧠 Concept
@@ -243,6 +244,20 @@ Step 4 — Validation:
    }
 }
 ```
+
+---
+
+# Local model
+
+On a Mac M4 pro with 48gb mem, it's possible to run a local model, e.g. lx-community/Qwen3.6-35B-A3B-6bit. With these settings:
+- Context 128k
+- Temperature 0.7
+- Top K Samplinh 20
+- Repeat penalty 1
+- Top P Sampling 0.95
+- Remove '| safe' from Jinja prompt template
+
+See opencode.json for the agent configuration
 
 ---
 

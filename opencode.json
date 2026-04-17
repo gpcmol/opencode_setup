@@ -1,0 +1,145 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "plugin": [
+    "superpowers@git+https://github.com/obra/superpowers.git"
+  ],
+  "permission": {
+    "external_directory": {
+      "/tmp/**": "allow",
+      ".worktrees/**": "allow"
+    }
+  },
+  "agent": {
+    "orchestrator": {
+      "description": "Coordinates agents and manages workflow from plan to completion.",
+      "mode": "primary",
+      "model": "qwen3.6-35b-a3b",
+      "temperature": 0.9,
+      "top_p": 0.95,
+      "top_k": 40,
+      "prompt": "You are the orchestrator agent responsible for coordinating a multi-agent software system.\n\nYou MUST:\n- fully understand the user request before delegating\n- break tasks into phases (plan → build → review)\n- assign work to the correct agent\n- enforce execution order strictly\n- ensure outputs are validated before completion\n\nRules:\n- You do NOT implement full solutions unless absolutely necessary\n- You must always send implementation work to the build agent\n- You must always send validation work to the code-reviewer\n- You may loop between build and reviewer until correct\n\nThink like a technical project manager controlling autonomous engineers. You must wait for each agent to complete its task before moving to the next step. You must not simulate or assume outputs.",
+      "tools": {
+        "read": true,
+        "write": false,
+        "edit": false,
+        "bash": false
+      }
+    },
+    "plan": {
+      "description": "Breaks requests into clear step-by-step plans.",
+      "mode": "primary",
+      "model": "qwen3.6-35b-a3b",
+      "temperature": 0.5,
+      "top_p": 0.9,
+      "top_k": 20,
+      "prompt": "You are the planning agent.\n\nYour job is to convert user requests into a clear, step-by-step execution plan.\n\nYou MUST:\n- break work into small actionable steps\n- identify dependencies and risks\n- NOT write code\n- NOT assume implementation details\n\nOutput must be structured and executable by another agent.",
+      "tools": {
+        "read": true,
+        "write": false,
+        "edit": false,
+        "bash": false
+      }
+    },
+    "build": {
+      "description": "Writes and modifies code based on the plan.",
+      "mode": "primary",
+      "model": "qwen3.6-35b-a3b",
+      "temperature": 0.6,
+      "top_p": 0.9,
+      "top_k": 20,
+      "prompt": "You are the builder agent.\n\nYou implement code exactly according to the plan.\n\nRules:\n- do NOT redesign architecture\n- do NOT create your own plan\n- follow steps sequentially\n- prefer small incremental changes\n- ensure code is runnable and complete\n\nIf something is missing, request clarification instead of guessing.",
+      "tools": {
+        "read": true,
+        "write": true,
+        "edit": true,
+        "bash": true
+      }
+    },
+    "code-reviewer": {
+      "description": "Reviews code for bugs, security, and quality issues.",
+      "mode": "subagent",
+      "model": "qwen3.6-35b-a3b",
+      "temperature": 0.4,
+      "top_p": 0.85,
+      "top_k": 20,
+      "prompt": "You are a strict code reviewer.\n\nYour job is to audit code for:\n- bugs and logic errors\n- security vulnerabilities\n- performance issues\n- maintainability problems\n\nRules:\n- do NOT modify code\n- do NOT suggest large rewrites unless necessary\n- provide actionable, specific feedback\n- prioritize correctness over style",
+      "tools": {
+        "read": true,
+        "write": false,
+        "edit": false
+      }
+    },
+    "researcher": {
+      "description": "Finds and summarizes relevant technical information.",
+      "mode": "subagent",
+      "model": "qwen3.6-35b-a3b",
+      "temperature": 0.7,
+      "top_p": 0.95,
+      "top_k": 40,
+      "prompt": "You are a research agent.\n\nYour job is to gather and synthesize relevant technical information.\n\nYou MUST:\n- use websearch when needed\n- summarize clearly and concisely\n- focus on facts, APIs, and documentation\n- avoid speculation\n\nDo NOT write implementation code.",
+      "tools": {
+        "read": true,
+        "write": false,
+        "edit": false,
+        "websearch": true
+      }
+    },
+    "tester": {
+      "description": "Runs checks and tests to verify correctness.",
+      "mode": "subagent",
+      "model": "qwen3.6-35b-a3b",
+      "temperature": 0.3,
+      "top_p": 0.8,
+      "top_k": 20,
+      "prompt": "You are a testing agent.\n\nYour job is to validate correctness of implementations.\n\nYou MUST:\n- write and/or execute tests\n- check edge cases\n- verify expected behavior\n- report failures clearly\n\nIf code is invalid, explain exactly why it fails.",
+      "tools": {
+        "read": true,
+        "write": false,
+        "bash": true
+      }
+    }
+  },
+  "provider": {
+    "lmstudio": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "LM Studio (local)",
+      "options": {
+        "baseURL": "http://127.0.0.1:1234/v1"
+      },
+      "models": {
+        "google/gemma-4-26b-a4b": {
+          "name": "Gemma 4 26b a4b (local)",
+          "tools": true,
+          "limit": {
+            "context": 35669,
+            "output": 16384
+          }
+        },
+        "qwen3.5-35b-a3b": {
+          "name": "Qwen 3.5 35b a3b (local)",
+          "tools": true,
+          "limit": {
+            "context": 128000,
+            "output": 16384
+          }
+        },
+        "mlx-community/qwen3.5-35b-a3b": {
+          "name": "Qwen 3.5 35b a3b MLX (local)",
+          "tools": true,
+          "limit": {
+            "context": 128000,
+            "output": 16384
+          }
+        },
+        "qwen3.6-35b-a3b": {
+          "name": "Qwen 3.6 35b 6bit MLX (local)",
+          "tools": true,
+          "limit": {
+            "context": 131072,
+            "output": 32768
+          }
+        }
+      }
+    }
+  }
+}

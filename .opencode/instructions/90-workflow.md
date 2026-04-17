@@ -3,9 +3,11 @@
 ## -1. Execution defaults (NO PROMPTS)
 
 - Always use sub-agent driven execution
+- Always use multi-agent mode (Superpowers) when available
 - Never use inline execution
 - Always create and use a git worktree
-- Never ask the user to choose execution mode or worktree
+- Never ask the user to choose execution mode, agent mode, or worktree strategy
+- Automatically select multi-agent orchestration without prompting or confirmation
 - Assume these preferences are mandatory defaults
 - Automatically proceed with these choices
 
