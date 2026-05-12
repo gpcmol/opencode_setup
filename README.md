@@ -629,6 +629,15 @@ Together they form a **closed feedback loop system**.
 
 ---
 
+# Caveman (reduce tokens)
+curl -fsSL https://raw.githubusercontent.com/JuliusBrussee/caveman/main/install.sh | bash
+use `/caveman` in opencode
+
+# GitNexus
+npm install -g gitnexus
+gitnexus setup
+gitnexus analyze (in project)
+
 # 🚧 TODO
 
 * Add architecture examples (ports/adapters, clean architecture)

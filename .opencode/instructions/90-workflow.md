@@ -1,3 +1,4 @@
+```md
 # Development Workflow
 
 ## -1. Execution defaults (NO PROMPTS)
@@ -25,7 +26,11 @@
 - Keep the main branch clean at all times
 - Commit changes in small, logical steps
 - Use clear commit messages (what + why)
-- Never leave the worktree in a broken state (tests must pass)
+- Never leave the worktree in a broken state
+- Required validation must pass for the task type:
+  - Tests for application code
+  - Validation/linting/dry-runs for infra
+  - Execution validation/linting for scripts
 - Sync regularly with main branch if needed (rebase or merge carefully)
 
 ---
@@ -44,13 +49,70 @@
 
 ---
 
+## 1.5 Task classification (MANDATORY)
+
+Before implementation, classify the task:
+
+### Application code
+Examples:
+- Backend/frontend business logic
+- APIs
+- Services
+- Libraries
+- UI components
+- Domain logic
+
+Validation expectations:
+- Unit tests expected where meaningful
+- Integration tests when behavior crosses boundaries
+- Prefer TDD when practical
+
+---
+
+### Infrastructure/configuration
+Examples:
+- Terraform
+- Kubernetes
+- Helm
+- Docker
+- CI/CD
+- Cloud configuration
+- IaC modules
+
+Validation expectations:
+- Prefer validation, linting, plans, or dry-runs
+- Verify manifests/configuration
+- Automated tests optional unless repository standards require them
+
+---
+
+### Operational/scripts
+Examples:
+- Bash scripts
+- Automation tooling
+- Developer utilities
+- Maintenance scripts
+- Local tooling wrappers
+
+Validation expectations:
+- Prefer execution verification
+- Use shellcheck or equivalent linting
+- Use smoke tests where appropriate
+- Formal unit tests optional unless complexity justifies them
+
+---
+
+Do NOT create artificial tests solely to satisfy workflow requirements.
+
+---
+
 ## 2. Plan before coding (MANDATORY)
 
 - Identify impacted areas
 - Break down into small, incremental steps
 - Define:
   - Expected behavior
-  - Test strategy
+  - Validation strategy
 - Identify:
   - Risks
   - Edge cases
@@ -76,9 +138,13 @@ Do NOT start implementation if:
 - Follow existing patterns strictly
 - Respect brownfield constraints
 
-Prefer TDD:
+Prefer TDD for application code when practical:
 - Write a failing test first (if feasible)
 - Implement minimal code to pass
+
+For infrastructure or scripting tasks:
+- Prefer validation-first workflows
+- Use linting, dry-runs, syntax validation, or smoke checks where appropriate
 
 Avoid:
 - Large refactors outside scope
@@ -89,12 +155,24 @@ Avoid:
 
 ## 4. Feedback loop (MANDATORY after EACH step)
 
-### 4.1 Run tests
+### 4.1 Run validation appropriate to the task
 
+### Application code
 - Run unit tests
 - Run integration tests (if applicable)
 
-If tests fail:
+### Infrastructure/configuration
+- Run relevant validation tools
+- Run linting
+- Run dry-runs/plans when supported
+- Validate manifests/configuration
+
+### Scripts/automation
+- Run shellcheck or equivalent linting
+- Verify execution behavior
+- Run smoke tests if appropriate
+
+If validation fails:
 - Stop
 - Analyze root cause
 - Fix before continuing
@@ -113,7 +191,7 @@ Check for:
 If complexity is too high:
 - Refactor only modified areas
 - Keep behavior unchanged
-- Re-run tests
+- Re-run applicable validation
 
 ---
 
@@ -126,7 +204,7 @@ If complexity is too high:
 ---
 
 Repeat until:
-- Tests pass
+- Validation passes
 - Complexity is acceptable
 - Step is clean and complete
 
@@ -142,6 +220,11 @@ Repeat until:
 Perform critical self-review:
 - Would another developer understand this quickly?
 - Is this consistent with the codebase?
+
+Ensure the correct validation standard was applied:
+- Tests for application logic
+- Validation/plans for infrastructure
+- Execution/linting for scripts
 
 ---
 
@@ -161,19 +244,21 @@ Prepare for merge:
 
 ---
 
-## Definition of Done (STRICT)
+# Definition of Done (STRICT)
 
 A task is NOT complete unless:
 
-- All tests pass
-- Tests exist for new or changed behavior
+- Appropriate validation passes for the task type
+- Tests exist for new or changed application behavior when applicable
+- Infra/config/script changes include appropriate validation or verification
 - No breaking changes are introduced
 - OpenAPI is aligned with implementation (if applicable)
-- Code changes are:
+- Code/config changes are:
   - Small
   - Safe
   - Localized
 - Complexity is acceptable in modified areas
-- Code follows existing patterns
+- Existing patterns are followed
 - Worktree is clean and stable
 - Branch is ready for merge without additional fixes
+```
